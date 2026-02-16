@@ -14,7 +14,7 @@ class MFW_C_Window
         MFW_C_Window() = delete;
         ~MFW_C_Window() = delete;
 
-        [[nodiscard]] const uint32_t* getPosition() const { return this->_position; };
+        [[nodiscard]] const uint32_t* getPosition() const { return this->_position; }
         [[nodiscard]] const uint32_t* getSize() const { return this->_size; }
 };
 
