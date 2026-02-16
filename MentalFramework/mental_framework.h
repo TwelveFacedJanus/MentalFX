@@ -33,6 +33,7 @@ class MFW_C_Window
                             void            setSize    (uint32_t x, uint32_t y)     { this->_size[0] = x; this->_size[1] = y; }
 
         [[nodiscard]]       bool            windowShouldClose();
+                            void            run();
 };
 
 }
