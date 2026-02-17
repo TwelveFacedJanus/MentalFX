@@ -43,3 +43,7 @@
 Build
 compile_commands.json
 .cache
+.vs
+.vscode
+.zed
+out
