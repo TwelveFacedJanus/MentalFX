@@ -2,6 +2,11 @@
 #define MENTAL_FRAMEWORK_H
 
 #include <cstdint>
+#include <memory>
+
+#ifdef MENTAL_ENABLE_GLFW
+    #include <GLFW/glfw3.h>
+#endif
 
 
 namespace mental_framework
@@ -12,9 +17,14 @@ class MFW_C_Window
     private:
         uint32_t _position[2] = {0, 0};
         uint32_t _size[2] = {0, 0};
+
+        #ifdef MENTAL_ENABLE_GLFW
+            std::shared_ptr<GLFWwindow> _window_sptr = nullptr;
+        #endif
+
     public:
-        MFW_C_Window() = delete;
-        ~MFW_C_Window() = delete;
+        MFW_C_Window() {}
+        ~MFW_C_Window() {}
 
         MFW_C_Window(const MFW_C_Window&) = delete;
         MFW_C_Window& operator=(const MFW_C_Window&) = delete;

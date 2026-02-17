@@ -10,7 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -19,6 +19,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
+
 
 
 if(MSVC)
@@ -47,18 +48,46 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/MentalFX
 )
 
+set(MFW_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/MentalFramework/mental_framework.cc
+)
 
-set(SOURCES
+set(MFW_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/MentalFramework/mental_framework.h
+)
+
+add_library(MentalFramework STATIC ${MFW_SOURCES} ${MFW_HEADERS})
+target_include_directories(MentalFramework
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/MentalFramework
+)
+target_compile_features(MentalFramework PUBLIC cxx_std_23)
+set_target_properties(MentalFramework PROPERTIES
+    OUTPUT_NAME MentalFramework
+    DEBUG_POSTFIX "_d"
+)
+
+
+set(FX_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/MentalFX/mental_fx.cc
 )
 
-set(HEADERS
+set(FX_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/MentalFX/mental_fx.h
 )
 
+add_executable(${PROJECT_NAME} ${FX_SOURCES} ${FX_HEADERS})
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+        MentalFramework
+)
 
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/MentalFX
+        ${CMAKE_CURRENT_SOURCE_DIR}/MentalFramework  # Для заголовков
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -69,12 +98,24 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     C_STANDARD 11
 )
 
+if(CMAKE_EXPORT_COMPILE_COMMANDS AND NOT WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+            ${CMAKE_BINARY_DIR}/compile_commands.json
+            ${CMAKE_SOURCE_DIR}/compile_commands.json
+        COMMENT "Creating symlink to compile_commands.json in project root"
+    )
+endif()
+
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
 )
+
+install(FILES ${MFW_HEADERS} DESTINATION include/MentalFramework)
+install(FILES ${FX_HEADERS} DESTINATION include/MentalFX)
 
 
 if (CPACK_ENABLE)
