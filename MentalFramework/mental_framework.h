@@ -23,8 +23,8 @@ class MFW_C_Window
         #endif
 
     public:
-        MFW_C_Window() {}
-        ~MFW_C_Window() {}
+        MFW_C_Window();
+        ~MFW_C_Window();
 
         MFW_C_Window(const MFW_C_Window&) = delete;
         MFW_C_Window& operator=(const MFW_C_Window&) = delete;
