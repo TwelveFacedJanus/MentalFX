@@ -1,10 +1,12 @@
-#include "mental_framework.h"
+#include "mental_glfw_window.h"
 
 int main(int argc, const char* argv[])
 {
-    mental_framework::MFW_C_Window window_{};
-
     (void)argc;
     (void)argv;
+
+    MFW_C_Window window_{};
+    window_.run();
+
     return 0;
 }
